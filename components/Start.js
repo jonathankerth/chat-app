@@ -28,12 +28,19 @@ const Start = () => {
 					onChangeText={setName}
 					value={name}
 				/>
+				{Platform.OS === "ios" ? (
+					<KeyboardAvoidingView behavior="padding" />
+				) : null}
 				<Text style={styles.colorText}>Choose Background Color:</Text>
 				<View style={styles.colorSelection}>
 					{["#090C08", "#474056", "#8A95A5", "#B9C6AE"].map((item) => (
 						<TouchableOpacity
 							key={item}
 							onPress={() => setColor(item)}
+							accessible={true}
+							accessibilityLabel="More options"
+							accessibilityHint="Lets you choose to send an image or your geolocation."
+							accessibilityRole="button"
 							style={[
 								styles.colorButton,
 								{ backgroundColor: item },
