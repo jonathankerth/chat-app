@@ -1,55 +1,67 @@
 import React, { useState } from "react";
 import {
+	StyleSheet,
 	View,
 	Text,
 	TextInput,
 	TouchableOpacity,
-	StyleSheet,
 	ImageBackground,
 } from "react-native";
+import { getAuth, signInAnonymously } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
-import backgroundImage from "../assets/bg-image.png"; // Adjust the path according to your project structure
 
-const Start = () => {
+const Start = ({ db }) => {
 	const [name, setName] = useState("");
 	const [color, setColor] = useState("");
 	const navigation = useNavigation();
+	const auth = getAuth();
 
-	const onPress = () => {
-		navigation.navigate("Chat", { name, color });
+	const handlePress = () => {
+		signInAnonymously(auth)
+			.then((userCredential) => {
+				const user = userCredential.user;
+				navigation.navigate("Chat", { uid: user.uid, name, color, db });
+			})
+			.catch((error) => {
+				console.error("Failed to sign in anonymously:", error);
+			});
 	};
 
 	return (
-		<ImageBackground style={styles.container} source={backgroundImage}>
-			<View style={styles.whiteBox}>
-				<TextInput
-					style={styles.textInput}
-					placeholder="Your Name"
-					onChangeText={setName}
-					value={name}
-				/>
-				{Platform.OS === "ios" ? (
-					<KeyboardAvoidingView behavior="padding" />
-				) : null}
-				<Text style={styles.colorText}>Choose Background Color:</Text>
-				<View style={styles.colorSelection}>
-					{["#090C08", "#474056", "#8A95A5", "#B9C6AE"].map((item) => (
+		<ImageBackground
+			source={require("../assets/bg-image.png")}
+			style={styles.backgroundImage}
+		>
+			<View style={styles.container}>
+				<Text style={styles.title}>Chat Away!</Text>
+				<View style={styles.inputContainer}>
+					<TextInput
+						style={styles.nameInput}
+						placeholder="Your Name"
+						onChangeText={setName}
+						value={name}
+					/>
+					<Text style={styles.colorText}>Choose Background Color:</Text>
+					<View style={styles.colorOptions}>
 						<TouchableOpacity
-							key={item}
-							onPress={() => setColor(item)}
-							accessible={true}
-							accessibilityLabel="More options"
-							accessibilityHint="Lets you choose to send an image or your geolocation."
-							accessibilityRole="button"
-							style={[
-								styles.colorButton,
-								{ backgroundColor: item },
-								color === item ? styles.selectedColor : null,
-							]}
+							style={[styles.colorButton, styles.colorOption1]}
+							onPress={() => setColor("#090C08")}
 						/>
-					))}
+						<TouchableOpacity
+							style={[styles.colorButton, styles.colorOption2]}
+							onPress={() => setColor("#474056")}
+						/>
+						<TouchableOpacity
+							style={[styles.colorButton, styles.colorOption3]}
+							onPress={() => setColor("#8A95A5")}
+						/>
+						<TouchableOpacity
+							style={[styles.colorButton, styles.colorOption4]}
+							onPress={() => setColor("#B9C6AE")}
+						/>
+					</View>
 				</View>
-				<TouchableOpacity onPress={onPress} style={styles.button}>
+				<TouchableOpacity style={styles.button} onPress={handlePress}>
 					<Text style={styles.buttonText}>Start Chatting</Text>
 				</TouchableOpacity>
 			</View>
@@ -58,57 +70,74 @@ const Start = () => {
 };
 
 const styles = StyleSheet.create({
+	backgroundImage: {
+		flex: 1,
+		resizeMode: "cover",
+		justifyContent: "center",
+	},
 	container: {
 		flex: 1,
+		alignItems: "center",
 		justifyContent: "center",
-		alignItems: "center",
-	},
-	whiteBox: {
-		backgroundColor: "#FFF",
-		borderRadius: 10,
 		padding: 20,
-		width: "90%",
-		alignItems: "center",
 	},
-	textInput: {
-		height: 40,
-		borderColor: "gray",
-		borderWidth: 1,
-		marginBottom: 20,
-		padding: 10,
+	title: {
+		fontSize: 45,
+		fontWeight: "600",
+		color: "#FFFFFF",
+	},
+	inputContainer: {
 		width: "100%",
+		marginTop: 50,
+	},
+	nameInput: {
+		backgroundColor: "#FFFFFF",
+		opacity: 0.5,
+		height: 50,
+		fontSize: 16,
+		fontWeight: "300",
+		borderRadius: 5,
+		paddingLeft: 15,
+		marginBottom: 20,
+	},
+	colorText: {
+		fontSize: 16,
+		fontWeight: "300",
+		color: "#FFFFFF",
+	},
+	colorOptions: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		marginBottom: 20,
+	},
+	colorButton: {
+		width: 50,
+		height: 50,
+		borderRadius: 25,
+	},
+	colorOption1: {
+		backgroundColor: "#090C08",
+	},
+	colorOption2: {
+		backgroundColor: "#474056",
+	},
+	colorOption3: {
+		backgroundColor: "#8A95A5",
+	},
+	colorOption4: {
+		backgroundColor: "#B9C6AE",
 	},
 	button: {
-		backgroundColor: "#7595f9",
-		width: "100%",
-		padding: 15,
+		backgroundColor: "#757083",
+		justifyContent: "center",
 		alignItems: "center",
+		height: 50,
 		borderRadius: 5,
 	},
 	buttonText: {
-		color: "#fff",
-		fontSize: 18,
-	},
-	colorText: {
-		fontSize: 18,
-		color: "#757083",
-		fontWeight: "300",
-		marginBottom: 10,
-	},
-	colorSelection: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		width: "100%",
-		marginBottom: 30,
-	},
-	colorButton: {
-		width: 45,
-		height: 45,
-		borderRadius: 22.5,
-	},
-	selectedColor: {
-		borderWidth: 2,
-		borderColor: "#fff",
+		color: "#FFFFFF",
+		fontSize: 16,
+		fontWeight: "600",
 	},
 });
 
