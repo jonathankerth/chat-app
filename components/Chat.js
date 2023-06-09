@@ -49,7 +49,7 @@ const Chat = ({ route, db, isConnected }) => {
 					setItem();
 				});
 				return () => {
-					messageListener(); // Correctly unsubscribe the Firestore listener
+					unsubscribe(messageListener);
 				};
 			} else {
 				const cachedMessages =
@@ -61,7 +61,13 @@ const Chat = ({ route, db, isConnected }) => {
 	}, [isConnected]);
 
 	const onSend = async (newMessages) => {
-		addDoc(collection(db, "messages"), newMessages[0]);
+		const messageToBeAdded = {
+			...newMessages[0],
+			_id: newMessages[0]._id || Math.random().toString(), // ensure _id is set
+			createdAt: newMessages[0].createdAt || new Date(), // ensure createdAt is set
+		};
+		await addDoc(collection(db, "messages"), messageToBeAdded);
+
 		if (isConnected) {
 			const newMessageList = GiftedChat.append(messages, newMessages);
 			await AsyncStorage.setItem("messages", JSON.stringify(newMessageList));
