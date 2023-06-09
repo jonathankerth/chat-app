@@ -6,6 +6,7 @@ import {
 	query,
 	onSnapshot,
 	orderBy,
+	unsubscribe,
 } from "firebase/firestore";
 
 const Chat = ({ route, db }) => {
@@ -15,20 +16,23 @@ const Chat = ({ route, db }) => {
 	useEffect(() => {
 		const messagesCollection = collection(db, "messages");
 		const q = query(messagesCollection, orderBy("createdAt", "desc"));
-		const unsubscribe = onSnapshot(q, (querySnapshot) => {
+		const messageListener = onSnapshot(q, (querySnapshot) => {
 			const messagesFirestore = querySnapshot.docs.map((doc) => {
 				const data = doc.data();
 				return {
 					_id: data._id,
 					text: data.text,
-					createdAt: new Date(data.createdAt.seconds * 1000), // convert to JS date object
+					createdAt: new Date(data.createdAt.seconds * 1000),
 					user: data.user,
 				};
 			});
 			setMessages(messagesFirestore);
 		});
 
-		return unsubscribe; // clean up function
+		// Clean up listener
+		return () => {
+			unsubscribe(messageListener);
+		};
 	}, []);
 
 	const onSend = (newMessages) => {
