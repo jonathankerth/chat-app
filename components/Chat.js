@@ -49,7 +49,9 @@ const Chat = ({ route, db, isConnected }) => {
 					setItem();
 				});
 				return () => {
-					unsubscribe(messageListener);
+					if (isConnected) {
+						unsubscribe(messageListener);
+					}
 				};
 			} else {
 				const cachedMessages =
