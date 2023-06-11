@@ -22,6 +22,11 @@ With the rise in popularity of smartphones for daily tasks, creating mobile vers
 - The chat provides users with two additional communication features: sending images and location data.
 - Data is stored online and offline.
 
+## Necessary Libraries Installation
+
+- In your project directory, install all the necessary libraries using npm by running the command `npm install`.
+- Once all the libraries are installed, start the project by running `npm start`.
+
 ## Technical Requirements
 
 - The app is written in React Native.
