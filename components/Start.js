@@ -1,29 +1,28 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
 	StyleSheet,
-	View,
 	Text,
 	TextInput,
+	View,
 	TouchableOpacity,
+	Alert,
 	ImageBackground,
 } from "react-native";
 import { getAuth, signInAnonymously } from "firebase/auth";
-import { useNavigation } from "@react-navigation/native";
 
-const Start = ({ db }) => {
+const Start = ({ navigation }) => {
+	const auth = getAuth();
 	const [name, setName] = useState("");
 	const [color, setColor] = useState("");
-	const navigation = useNavigation();
-	const auth = getAuth();
 
-	const handlePress = () => {
+	const loginUser = () => {
 		signInAnonymously(auth)
-			.then((userCredential) => {
-				const user = userCredential.user;
-				navigation.navigate("Chat", { uid: user.uid, name, color, db });
+			.then((result) => {
+				navigation.navigate("Chat", { userID: result.user.uid, name, color });
+				Alert.alert("Successfully Signed In");
 			})
 			.catch((error) => {
-				console.error("Failed to sign in anonymously:", error);
+				Alert.alert("Unable to Login, try later again.");
 			});
 	};
 
@@ -33,36 +32,34 @@ const Start = ({ db }) => {
 			style={styles.backgroundImage}
 		>
 			<View style={styles.container}>
-				<Text style={styles.title}>Chat Away!</Text>
-				<View style={styles.inputContainer}>
-					<TextInput
-						style={styles.nameInput}
-						placeholder="Your Name"
-						onChangeText={setName}
-						value={name}
+				<Text style={styles.title}>Weclome!</Text>
+				<TextInput
+					style={styles.nameInput}
+					onChangeText={setName}
+					value={name}
+					placeholder="Type here ..."
+				/>
+				<Text style={styles.colorText}>Choose Background Color:</Text>
+				<View style={styles.colorOptions}>
+					<TouchableOpacity
+						style={[styles.colorButton, styles.colorOption1]}
+						onPress={() => setColor("#090C08")}
 					/>
-					<Text style={styles.colorText}>Choose Background Color:</Text>
-					<View style={styles.colorOptions}>
-						<TouchableOpacity
-							style={[styles.colorButton, styles.colorOption1]}
-							onPress={() => setColor("#090C08")}
-						/>
-						<TouchableOpacity
-							style={[styles.colorButton, styles.colorOption2]}
-							onPress={() => setColor("#474056")}
-						/>
-						<TouchableOpacity
-							style={[styles.colorButton, styles.colorOption3]}
-							onPress={() => setColor("#8A95A5")}
-						/>
-						<TouchableOpacity
-							style={[styles.colorButton, styles.colorOption4]}
-							onPress={() => setColor("#B9C6AE")}
-						/>
-					</View>
+					<TouchableOpacity
+						style={[styles.colorButton, styles.colorOption2]}
+						onPress={() => setColor("#474056")}
+					/>
+					<TouchableOpacity
+						style={[styles.colorButton, styles.colorOption3]}
+						onPress={() => setColor("#8A95A5")}
+					/>
+					<TouchableOpacity
+						style={[styles.colorButton, styles.colorOption4]}
+						onPress={() => setColor("#B9C6AE")}
+					/>
 				</View>
-				<TouchableOpacity style={styles.button} onPress={handlePress}>
-					<Text style={styles.buttonText}>Start Chatting</Text>
+				<TouchableOpacity style={styles.button} onPress={loginUser}>
+					<Text style={styles.buttonText}>Go to Chat</Text>
 				</TouchableOpacity>
 			</View>
 		</ImageBackground>
@@ -99,6 +96,7 @@ const styles = StyleSheet.create({
 		borderRadius: 5,
 		paddingLeft: 15,
 		marginBottom: 20,
+		width: "100%",
 	},
 	colorText: {
 		fontSize: 16,
