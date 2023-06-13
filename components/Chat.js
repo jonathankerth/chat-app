@@ -8,7 +8,8 @@ import {
 	orderBy,
 } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { View, Platform, KeyboardAvoidingView } from "react-native";
+import { View, Platform, KeyboardAvoidingView, StyleSheet } from "react-native";
+
 import MapView from "react-native-maps";
 
 import CustomActions from "./CustomActions";
@@ -16,6 +17,7 @@ import CustomActions from "./CustomActions";
 const Chat = ({ db, storage, route, navigation, isConnected }) => {
 	const { name, userID, color } = route.params;
 	const [messages, setMessages] = useState([]);
+
 	let unsubMessages;
 
 	useEffect(() => {
@@ -29,11 +31,17 @@ const Chat = ({ db, storage, route, navigation, isConnected }) => {
 			unsubMessages = onSnapshot(q, (docs) => {
 				let newMessages = [];
 				docs.forEach((doc) => {
-					newMessages.push({
-						id: doc.id,
-						...doc.data(),
-						createdAt: new Date(doc.data().createdAt.toMillis()),
-					});
+					let data = doc.data();
+					if (data.createdAt && data.createdAt.toMillis) {
+						newMessages.push({
+							id: doc.id,
+							...data,
+							createdAt: new Date(data.createdAt.toMillis()),
+						});
+					} else {
+						// handle the case where createdAt is not a Timestamp
+						console.log("createdAt is not a Timestamp: ", data.createdAt);
+					}
 				});
 				cacheMessages(newMessages);
 				setMessages(newMessages);
@@ -59,11 +67,14 @@ const Chat = ({ db, storage, route, navigation, isConnected }) => {
 	};
 
 	const onSend = async (newMessages) => {
-		await addDoc(collection(db, "messages"), newMessages[0]);
-
-		if (isConnected) {
-			const newMessageList = GiftedChat.append(messages, newMessages);
-			await AsyncStorage.setItem("messages", JSON.stringify(newMessageList));
+		try {
+			await addDoc(collection(db, "messages"), newMessages[0]);
+			if (isConnected) {
+				const newMessageList = GiftedChat.append(messages, newMessages);
+				await AsyncStorage.setItem("messages", JSON.stringify(newMessageList));
+			}
+		} catch (error) {
+			console.log(error.message);
 		}
 	};
 
@@ -129,11 +140,9 @@ const Chat = ({ db, storage, route, navigation, isConnected }) => {
 				user={{ _id: userID, name: name }}
 				keyboardShouldPersistTaps="never"
 			/>
-			{Platform.OS === "android" ? (
-				<KeyboardAvoidingView behavior="height" />
-			) : null}
 		</View>
 	);
 };
+const styles = StyleSheet.create({});
 
 export default Chat;

@@ -63,9 +63,9 @@ const App = () => {
 				<Stack.Screen name="Chat">
 					{(props) => (
 						<Chat
-							isConnected={connectionStatus.isConnected}
 							db={db}
 							storage={storage}
+							isConnected={connectionStatus.isConnected}
 							{...props}
 						/>
 					)}

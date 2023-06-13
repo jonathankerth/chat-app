@@ -7,7 +7,9 @@ import {
 	TouchableOpacity,
 	Alert,
 	ImageBackground,
+	KeyboardAvoidingView,
 } from "react-native";
+import { Platform } from "react-native";
 import { getAuth, signInAnonymously } from "firebase/auth";
 
 const Start = ({ navigation }) => {
@@ -31,7 +33,10 @@ const Start = ({ navigation }) => {
 			source={require("../assets/bg-image.png")}
 			style={styles.backgroundImage}
 		>
-			<View style={styles.container}>
+			<KeyboardAvoidingView
+				behavior={Platform.OS === "ios" ? "padding" : "height"}
+				style={styles.container}
+			>
 				<Text style={styles.title}>Weclome!</Text>
 				<TextInput
 					style={styles.nameInput}
@@ -61,7 +66,7 @@ const Start = ({ navigation }) => {
 				<TouchableOpacity style={styles.button} onPress={loginUser}>
 					<Text style={styles.buttonText}>Go to Chat</Text>
 				</TouchableOpacity>
-			</View>
+			</KeyboardAvoidingView>
 		</ImageBackground>
 	);
 };
