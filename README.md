@@ -1,10 +1,10 @@
 # React Native Mobile Chat App
 
-This project involves building a mobile chat application using React Native. The app will provide users with a chat interface and options to share images and their location.
+This project involves building a mobile chat application using React Native. The app provides users with a chat interface and options to share images and their location.
 
 ## Overview
 
-With the rise in popularity of smartphones for daily tasks, creating mobile versions of applications is crucial for user convenience. This project utilizes React Native, a framework for building Android and iOS apps that require a single codebase. In addition to React Native, we will use Expo and Google Firestore Database to create a chat app that users can use for effective communication.
+With the rise in popularity of smartphones for daily tasks, creating mobile versions of applications is crucial for user convenience. This project utilizes React Native, a framework for building Android and iOS apps that require a single codebase. In addition to React Native, I used Expo and Google Firestore Database to create a chat app that users can use for effective communication.
 
 ## User Stories
 
