@@ -21,7 +21,7 @@
     "expo-location": "~15.1.1",
     "expo-media-library": "~15.2.3",
     "expo-status-bar": "~1.4.4",
-    "firebase": "^9.22.2",
+    "firebase": "^9.23.0",
     "react": "18.2.0",
     "react-native": "0.71.10",
     "react-native-gifted-chat": "^2.3.0",
