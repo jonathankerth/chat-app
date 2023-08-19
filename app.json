@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "chat-app",
-    "slug": "chat-app",
+    "slug": "native-chat-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,6 +25,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "fd91b262-9c4c-4ad2-a226-712dceee2503"
+      }
+    },
+    "owner": "jkerth"
   }
 }
